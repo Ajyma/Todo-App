@@ -1,0 +1,82 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body{
+  background-color: whitesmoke;
+}
+.container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+}
+.card{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+.form{
+  background: rgb(72,66,122);
+  background: linear-gradient(90deg, rgba(72,66,122,1) 0%, rgb(68, 85, 146) 64%, rgb(63, 83, 144) 100%);
+  margin-bottom: 40px;
+  width: 340px;
+  margin-left: 30px;
+  padding: 4rem 1.5rem;
+  border-radius: 30px;
+}
+.form h4{
+  font-size: 30px;
+  text-align: center;
+  color: #fff;
+}
+.form input{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 15px;
+  background-color: rgba(27,41,83,1);
+  color: #fff;
+  border: none;
+  width: 100%;
+  padding: 10px 2rem;
+}
+.form input::placeholder{
+  color: white;
+  background-color: rgba(27,41,83,1);
+}
+.form .btn{
+  width: 60%;
+  margin-left: 50px;
+  height: 35px;
+  border-radius: 15px;
+  border: 1px solid gold;
+  background: none;
+  color: #fff;
+  margin-top: 20px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+.form a{
+  color: rgb(208, 203, 203);
+  margin-left: 20%;
+}
+
+.border-red{
+  border: 1px solid red;
+}
+
+@media (max-width: 768px) {
+  .form{
+    width: 280px;
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .form{
+    margin-left: 0;
+  }
+}
