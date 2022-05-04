@@ -4,6 +4,8 @@ const $date = document.querySelector('.date');
 const $submit = document.querySelector('.submit');
 const $container = document.querySelector('.main');
 const $signOut = document.querySelector('.signOut');
+const $allInputs = document.querySelectorAll('.form input, .form textarea');
+console.log($allInputs);
 
 const base = 'https://todo-itacademy.herokuapp.com/api'
 const accessToken = localStorage.getItem('accessToken')
@@ -49,11 +51,7 @@ const requests = {
 // <------------------------------------- Check unAuthorized ------------------------------------------->
 
 window.addEventListener('DOMContentLoaded', () => {
-  const accessToken = localStorage.getItem('accessToken')
-
-  if (!accessToken) {
-    window.open('../auth.html', '_self')
-  }
+  !localStorage.getItem('accessToken')&& window.open('../auth.html', '_self')
 })
 
 // <------------------------------------- Render todos when window loaded ------------------------------------------->
@@ -80,18 +78,16 @@ function getTodos() {
 
 // <-------------------------------------- get single Todo ------------------------------------->
 
-function getSingleTodo(id) {
-  return requests.get(`${base}/todos/${id}`, accessToken)
-}
+const getSingleTodo = id => requests.get(`${base}/todos/${id}`, accessToken)
 
 
 // <------------------------------------- Create Todos ---------------------------------------->
 
-function createTodos(title, content, date) {
+function createTodos() {
 
   $submit.disabled = true
 
-  requests.post(`${base}/todos/create`, accessToken, {title, content, date})
+  requests.post(`${base}/todos/create`, accessToken, getValueFromInputs())
   .then(getTodos)
   .finally(() => $submit.disabled = false)
 }
@@ -144,15 +140,12 @@ function deleteTodo(id) {
 function editTodo(id) {
   getSingleTodo(id)
   .then(res => {
-    const askTitle = prompt('New title', res.title)
-    const askContent = prompt('New content', res.content)
-
     fetch(`${base}/todos/${id}`, {
       method:'PUT',
       headers:requestsHeader(accessToken),
       body:JSON.stringify({
-        title:askTitle || res.title,
-        content:askContent || res.content
+        title:prompt('New title', res.title) || res.title,
+        content:prompt('New content', res.content) || res.content
       })
     })
     .then(getTodos)
@@ -161,19 +154,29 @@ function editTodo(id) {
 
 
 
-// <------------------------------------ Get Refresh ------------------------------------------>
-
-function getRefresh(){
-  requests.post(`${base}/refresh`,accessToken,{refreshToken})
-  then(getTodos)
+function isValidate() {
+  $allInputs.forEach(item => {
+    item.value.length === 0
+    ? item.classList.add('border-danger')
+    : item.classList.remove('border-danger')
+  })
+  return [...$allInputs].every(item => item.value)
 }
 
-
+function getValueFromInputs() {
+  return [...$allInputs].reduce((object, input) => {
+    return {
+      ...object,
+      [input.name]:input.value
+    }
+  })
+}
 
 $submit.addEventListener('click', e => {
   e.preventDefault()
   $submit.disabled = true
-  createTodos($title.value, $content.value, $date.value)
+  
+  isValidate && createTodos()
 })
 
 
@@ -181,12 +184,12 @@ $submit.addEventListener('click', e => {
 
 $signOut.addEventListener('click', e => {
   e.preventDefault()
-
+  
   const refreshToken = localStorage.getItem('refreshToken')
-
+  
   $signOut.disabled = true
   $signOut.classList.add('disabled')
-
+  
   requests.post(`${base}/logout`,'', {refreshToken})
   .then(res => {
     console.log(res);
@@ -198,3 +201,10 @@ $signOut.addEventListener('click', e => {
     $signOut.classList.remove('disabled')
   })
 })
+
+// <------------------------------------ Get Refresh ------------------------------------------>
+
+function getRefresh(){
+  requests.post(`${base}/refresh`,accessToken,{refreshToken})
+  then(getTodos)
+}

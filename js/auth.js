@@ -1,15 +1,11 @@
-const $email = document.querySelector('.emailInput');
-const $password = document.querySelector('.passwordInput');
 const $btn = document.querySelector('.btn');
+const $allInputs = document.querySelectorAll('.form input');
 const base_url = 'https://todo-itacademy.herokuapp.com/api/'
 
 function getAuth(url) {
   fetch(`${url}/login`, {
     method:'POST',
-    body:JSON.stringify({
-      email:$email.value,
-      password:$password.value
-    }),
+    body:JSON.stringify(getValueFromInputs()),
     headers:{
       'Content-type':'application/json'
     }
@@ -32,15 +28,28 @@ function getAuth(url) {
 
 $btn.addEventListener('click', e => {
   e.preventDefault()
-
+  isValidate() && getAuth(base_url)
   $btn.disabled = true
-  getAuth(base_url)
 })
 
 window.addEventListener('DOMContentLoaded', () => {
-  const isActicated = localStorage.getItem('isActivated')
-
-  if (isActicated === 'true') {
-    window.open('../index.html', '_self')
-  }
+  localStorage.getItem('isActivated')&& window.open('../index.html', '_self')
 })
+
+function isValidate() {
+  $allInputs.forEach(item => {
+    item.value.length === 0
+    ? item.classList.add('border-danger')
+    : item.classList.remove('border-danger')
+  })
+  return [...$allInputs].every(item => item.value)
+}
+
+function getValueFromInputs() {
+  return [...$allInputs].reduce((object, input) => {
+    return {
+      ...object,
+      [input.name]:input.value
+    }
+  })
+}
